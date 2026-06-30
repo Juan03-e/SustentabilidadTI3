@@ -10,11 +10,41 @@ let filtroNombre = "";
 let filtroPiso = "todos";
 let ordenSalones = "piso"; // "piso" | "gasto-actual" | "gasto-hoy"
 
+let periodoAnalisis = 14; // días hacia atrás que muestra la vista de Análisis
+
 function limpiarIntervalos() {
   clearInterval(intervaloRapido);
   clearInterval(intervaloLento);
   intervaloRapido = null;
   intervaloLento = null;
+}
+
+function ocultarTodasLasVistas() {
+  document.getElementById("vista-overview").style.display = "none";
+  document.getElementById("vista-salon").style.display = "none";
+  document.getElementById("vista-analisis").style.display = "none";
+}
+
+// ---------- Menú hamburguesa ----------
+
+function abrirMenu() {
+  document.getElementById("sidebar").classList.add("abierto");
+  document.getElementById("overlay-menu").classList.add("visible");
+}
+
+function cerrarMenu() {
+  document.getElementById("sidebar").classList.remove("abierto");
+  document.getElementById("overlay-menu").classList.remove("visible");
+}
+
+function toggleMenu() {
+  document.getElementById("sidebar").classList.contains("abierto") ? cerrarMenu() : abrirMenu();
+}
+
+function actualizarLinkActivo() {
+  document.querySelectorAll(".sidebar-link").forEach(a => {
+    a.classList.toggle("activo", a.dataset.vista === vistaActual);
+  });
 }
 
 function recalcularAcumuladosSimulados() {
@@ -91,7 +121,7 @@ function inicializarFiltros() {
 
 function mostrarOverview() {
   vistaActual = "overview";
-  document.getElementById("vista-salon").style.display = "none";
+  ocultarTodasLasVistas();
   document.getElementById("vista-overview").style.display = "block";
   document.getElementById("titulo-principal").textContent = "Monitoreo energético — Facultad";
   document.getElementById("subtitulo").textContent = "Vista general de todos los salones";
@@ -102,12 +132,24 @@ function mostrarOverview() {
   intervaloLento = setInterval(recalcularAcumuladosSimulados, 30000);
 }
 
+function mostrarAnalisis() {
+  vistaActual = "analisis";
+  ocultarTodasLasVistas();
+  document.getElementById("vista-analisis").style.display = "block";
+  document.getElementById("titulo-principal").textContent = "Análisis de datos";
+  document.getElementById("subtitulo").textContent = "Histórico simulado de consumo de la facultad";
+
+  document.getElementById("filtro-periodo").value = String(periodoAnalisis);
+  renderAnalisis(periodoAnalisis);
+  intervaloLento = setInterval(() => renderAnalisis(periodoAnalisis), 60000);
+}
+
 function mostrarSalon(id) {
   const salon = SALONES.find(s => s.id === id);
   if (!salon) { location.hash = "#/"; return; }
 
   vistaActual = salon.id;
-  document.getElementById("vista-overview").style.display = "none";
+  ocultarTodasLasVistas();
   document.getElementById("vista-salon").style.display = "block";
   document.getElementById("titulo-principal").textContent = salon.nombre;
   document.getElementById("subtitulo").textContent = salon.tipo === "real" ? "Medidor real (cable serial)" : "Simulación en vivo";
@@ -153,12 +195,30 @@ function onLecturaReal() {
 
 function route() {
   limpiarIntervalos();
-  const m = location.hash.match(/^#\/salon\/(.+)$/);
+  cerrarMenu();
+  const hash = location.hash;
+  const m = hash.match(/^#\/salon\/(.+)$/);
   if (m) mostrarSalon(decodeURIComponent(m[1]));
+  else if (hash === "#/analisis") mostrarAnalisis();
   else mostrarOverview();
+  actualizarLinkActivo();
+}
+
+function inicializarMenu() {
+  document.getElementById("btn-menu").addEventListener("click", toggleMenu);
+  document.getElementById("overlay-menu").addEventListener("click", cerrarMenu);
+}
+
+function inicializarAnalisis() {
+  document.getElementById("filtro-periodo").addEventListener("change", (e) => {
+    periodoAnalisis = Number(e.target.value);
+    if (vistaActual === "analisis") renderAnalisis(periodoAnalisis);
+  });
 }
 
 window.addEventListener("hashchange", route);
 document.getElementById("btn-conectar").addEventListener("click", conectarSalonReal);
 inicializarFiltros();
+inicializarMenu();
+inicializarAnalisis();
 route();

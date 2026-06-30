@@ -172,6 +172,51 @@ body.tecnico-visible .tech { display: inline; }
 .switch-tecnico { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-soft); cursor: pointer; user-select: none; }
 .switch-tecnico input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
 
+/* ---------- Menú hamburguesa ---------- */
+
+.header-izq { display: flex; align-items: center; gap: 16px; }
+
+#btn-menu {
+  background: var(--card); box-shadow: var(--shadow); border: 1px solid var(--border);
+  width: 42px; height: 42px; padding: 0; border-radius: var(--radius-sm);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  flex-shrink: 0;
+}
+#btn-menu:hover { background: var(--accent-soft); transform: none; box-shadow: var(--shadow); }
+#btn-menu span { width: 18px; height: 2px; background: var(--text); border-radius: 2px; }
+
+#overlay-menu {
+  position: fixed; inset: 0; background: rgba(51, 46, 39, 0.35);
+  opacity: 0; pointer-events: none; transition: opacity 0.2s ease; z-index: 1000;
+}
+#overlay-menu.visible { opacity: 1; pointer-events: auto; }
+
+#sidebar {
+  position: fixed; top: 0; left: 0; height: 100vh; width: 260px;
+  background: var(--card); box-shadow: var(--shadow-hover);
+  transform: translateX(-100%); transition: transform 0.22s ease;
+  z-index: 1001; padding: 24px 16px; display: flex; flex-direction: column; gap: 4px;
+}
+#sidebar.abierto { transform: translateX(0); }
+.sidebar-titulo { color: var(--text-soft); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; padding: 0 12px 12px; }
+.sidebar-link {
+  color: var(--text); text-decoration: none; font-weight: 600; font-size: 14px;
+  padding: 12px; border-radius: var(--radius-sm); transition: background 0.15s ease;
+}
+.sidebar-link:hover { background: var(--bg-soft); }
+.sidebar-link.activo { background: var(--accent-soft); color: var(--accent); }
+
+/* ---------- Vista Análisis ---------- */
+
+.analisis-toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+
+.analisis-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.grafico-ancho { grid-column: 1 / -1; }
+.grafico-panel { display: flex; flex-direction: column; height: 340px; }
+.grafico-panel canvas { flex: 1; min-height: 0; margin-top: 12px; }
+
 @media (max-width: 800px) {
   .grid, .resumen { grid-template-columns: 1fr; }
+  .analisis-grid { grid-template-columns: 1fr; }
+  #sidebar { width: 82vw; }
 }

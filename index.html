@@ -7,13 +7,26 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
+<div id="overlay-menu"></div>
+<nav id="sidebar">
+  <div class="sidebar-titulo">Menú</div>
+  <a href="#/" class="sidebar-link" data-vista="overview">Inicio</a>
+  <a href="#/analisis" class="sidebar-link" data-vista="analisis">Análisis de datos</a>
+</nav>
+
 <div class="header">
-  <div>
-    <h1 id="titulo-principal">Monitoreo energético — Facultad</h1>
-    <div class="sub" id="subtitulo">Vista general de todos los salones</div>
+  <div class="header-izq">
+    <button id="btn-menu" aria-label="Abrir menú">
+      <span></span><span></span><span></span>
+    </button>
+    <div>
+      <h1 id="titulo-principal">Monitoreo energético — Facultad</h1>
+      <div class="sub" id="subtitulo">Vista general de todos los salones</div>
+    </div>
   </div>
   <label class="switch-tecnico">
     <input type="checkbox" id="toggle-tecnico">
@@ -95,12 +108,51 @@
   <div class="footer">Última lectura: <span id="hora">—</span> · Acumulado se reinicia a las 00:00</div>
 </div>
 
+<!-- VISTA ANÁLISIS: histórico simulado de los salones, día a día -->
+<div id="vista-analisis" style="display:none">
+  <div class="analisis-toolbar">
+    <div class="lbl">Análisis sobre datos simulados de los últimos:</div>
+    <select id="filtro-periodo" class="filtro-select">
+      <option value="7">7 días</option>
+      <option value="14" selected>14 días</option>
+      <option value="30">30 días</option>
+    </select>
+  </div>
+
+  <div class="alerta">El salón con medidor real no tiene histórico propio (solo lectura en vivo): este análisis cubre los 9 salones simulados.</div>
+
+  <div class="analisis-grid">
+    <div class="panel grafico-panel grafico-ancho">
+      <div class="lbl" data-tip="Energía total de los salones simulados cada día del período elegido. Los sábados y domingos no hay clases.">Consumo diario de la facultad</div>
+      <canvas id="grafico-diario"></canvas>
+    </div>
+    <div class="panel grafico-panel">
+      <div class="lbl" data-tip="En qué franja horaria se concentra el consumo, promediando todos los días del período.">Patrón horario promedio</div>
+      <canvas id="grafico-horario"></canvas>
+    </div>
+    <div class="panel grafico-panel">
+      <div class="lbl" data-tip="Qué tipo de equipo pesa más en el consumo total del período: aire acondicionado, luces, computadoras, etc.">Consumo por tipo de equipo</div>
+      <canvas id="grafico-tipo"></canvas>
+    </div>
+    <div class="panel grafico-panel">
+      <div class="lbl" data-tip="Energía total consumida por cada piso en el período elegido.">Consumo por piso</div>
+      <canvas id="grafico-piso"></canvas>
+    </div>
+    <div class="panel grafico-panel">
+      <div class="lbl" data-tip="Los salones que más energía gastaron en el período: los primeros candidatos para buscar ahorro.">Ranking de salones</div>
+      <canvas id="grafico-ranking"></canvas>
+    </div>
+  </div>
+</div>
+
 <div id="tooltip"></div>
 
 <script src="config.js"></script>
 <script src="sim.js"></script>
 <script src="real.js"></script>
+<script src="historial.js"></script>
 <script src="ui.js"></script>
+<script src="graficos.js"></script>
 <script src="app.js"></script>
 
 </body>

@@ -32,7 +32,11 @@ function bloqueActual(date) {
 
 // Decide si hay clase en un salón durante el bloque horario actual. Es estable
 // durante todo el bloque y cambia de un día a otro (no parpadea segundo a segundo).
+// Los fines de semana la facultad no tiene clases: esto también le da forma a los
+// gráficos históricos (caída de consumo los sábados y domingos).
 function claseActiva(salonId, date) {
+  const diaSemana = date.getDay(); // 0 = domingo, 6 = sábado
+  if (diaSemana === 0 || diaSemana === 6) return false;
   const idx = bloqueActual(date);
   if (idx === -1) return false;
   const bloque = BLOQUES_CLASE[idx];
@@ -89,20 +93,22 @@ function generarLecturasSalon(salon, date = new Date()) {
   return salon.dispositivos.map(d => generarLecturaDispositivo(salon.id, d, date));
 }
 
-// Integra la potencia simulada (W) desde la medianoche local hasta "hasta", en pasos de
-// 2 minutos, para obtener el acumulado de energía de hoy en kWh por dispositivo
-// (la misma unidad que figura en una factura de UTE).
-function energiaAcumuladaHoy(salon, hasta = new Date()) {
-  const inicio = new Date(hasta);
-  inicio.setHours(0, 0, 0, 0);
-
+// Integra la potencia simulada (W) de un salón entre dos instantes, en pasos de "pasoMin"
+// minutos, y devuelve el total de energía en kWh por dispositivo (misma unidad que una
+// factura de UTE). Es la base tanto del acumulado de "hoy" como del histórico de otros días.
+function integrarEnergia(salon, inicio, fin, pasoMin) {
   const totales = {};
   salon.dispositivos.forEach(d => { totales[d.id] = 0; });
-
-  const pasoMin = 2;
-  for (let t = inicio.getTime(); t <= hasta.getTime(); t += pasoMin * 60000) {
+  for (let t = inicio.getTime(); t <= fin.getTime(); t += pasoMin * 60000) {
     const lecturas = generarLecturasSalon(salon, new Date(t));
     lecturas.forEach(l => { totales[l.id] += l.potencia * (pasoMin / 60) / 1000; });
   }
   return totales;
+}
+
+// Acumulado de energía (kWh por dispositivo) desde la medianoche local hasta "hasta".
+function energiaAcumuladaHoy(salon, hasta = new Date()) {
+  const inicio = new Date(hasta);
+  inicio.setHours(0, 0, 0, 0);
+  return integrarEnergia(salon, inicio, hasta, 2);
 }
