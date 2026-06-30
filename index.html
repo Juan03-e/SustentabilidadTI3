@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Monitoreo energético — Facultad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1 id="titulo-principal">Monitoreo energético — Facultad</h1>
+    <div class="sub" id="subtitulo">Vista general de todos los salones</div>
+  </div>
+  <label class="switch-tecnico">
+    <input type="checkbox" id="toggle-tecnico">
+    Ver datos técnicos (mA / mW / mWh)
+  </label>
+</div>
+
+<div id="sin-soporte" style="display:none" class="alerta">
+  Este navegador no soporta Web Serial. Usá Chrome o Edge en una computadora para conectar el salón real.
+</div>
+
+<!-- VISTA GENERAL: todos los salones de la facultad -->
+<div id="vista-overview">
+  <div class="resumen">
+    <div class="panel">
+      <div class="lbl" data-tip="Qué tan fuerte está consumiendo la facultad entera ahora mismo, comparado con su uso normal.">Consumo de la facultad ahora</div>
+      <div id="facultad-total"></div>
+      <div class="tech-line lbl" id="facultad-total-tech"></div>
+    </div>
+    <div class="panel">
+      <div class="lbl" data-tip="Toda la energía gastada por la facultad desde las 00:00 de hoy.">Energía usada hoy</div>
+      <div id="facultad-acum"></div>
+      <div class="tech-line lbl" id="facultad-acum-tech"></div>
+    </div>
+    <div class="panel">
+      <div class="lbl" data-tip="Cantidad de salones con al menos un dispositivo encendido en este momento.">Salones con consumo</div>
+      <div class="num-grande" id="facultad-activos">0 / 0</div>
+    </div>
+  </div>
+
+  <div class="filtros">
+    <input type="search" id="filtro-nombre" class="filtro-input" placeholder="Buscar salón por nombre…">
+    <select id="filtro-piso" class="filtro-select">
+      <option value="todos">Todos los pisos</option>
+    </select>
+    <select id="filtro-orden" class="filtro-select">
+      <option value="piso">Agrupado por piso</option>
+      <option value="gasto-actual">Mayor gasto ahora</option>
+      <option value="gasto-hoy">Mayor gasto hoy</option>
+    </select>
+  </div>
+
+  <div id="pisos"></div>
+</div>
+
+<!-- VISTA DETALLE: un salón en particular (real o simulado) -->
+<div id="vista-salon" style="display:none">
+  <a href="#/" class="volver">← Volver a la vista general</a>
+
+  <div id="bloque-conectar" style="display:none">
+    <div class="sub" id="estado-conexion" style="margin-bottom:8px">Sin conectar al medidor</div>
+    <button id="btn-conectar">Conectar al medidor</button>
+  </div>
+
+  <div class="grid" id="cards"></div>
+
+  <div class="resumen">
+    <div class="panel">
+      <div class="lbl" data-tip="Qué tan fuerte está consumiendo el salón ahora mismo, comparado con su uso normal.">Consumo del salón ahora</div>
+      <div id="total"></div>
+      <div class="tech-line lbl" id="total-tech"></div>
+    </div>
+    <div class="panel">
+      <div class="lbl" data-tip="Toda la energía gastada por el salón desde las 00:00 de hoy. Es lo que más importa para pensar en ahorro.">Energía usada hoy</div>
+      <div id="acum-total"></div>
+      <div class="tech-line lbl" id="acum-total-tech"></div>
+    </div>
+    <div class="panel">
+      <div class="lbl" data-tip="Cuántos dispositivos del salón están consumiendo en este momento.">Dispositivos encendidos</div>
+      <div class="num-grande" id="encendidos">0 / 0</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="lbl" style="margin-bottom:8px" data-tip="Comparación visual del consumo actual entre dispositivos. La barra más larga corresponde al dispositivo que más consume ahora.">Consumo por dispositivo (ahora)</div>
+    <div id="barras"></div>
+  </div>
+
+  <div class="footer">Última lectura: <span id="hora">—</span> · Acumulado se reinicia a las 00:00</div>
+</div>
+
+<div id="tooltip"></div>
+
+<script src="config.js"></script>
+<script src="sim.js"></script>
+<script src="real.js"></script>
+<script src="ui.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
