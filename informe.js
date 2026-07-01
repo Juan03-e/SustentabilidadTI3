@@ -123,18 +123,33 @@ function generarInformePDF(dias) {
   });
 
   // ---------- Gráficos ----------
+  // Cada canvas tiene su propia proporción (el "diario" es ancho, la dona es casi
+  // cuadrada); usar siempre el mismo alto fijo los deformaba. Se calcula el tamaño
+  // real del canvas y se ajusta la imagen del PDF a esa proporción, con una altura
+  // máxima para que un gráfico cuadrado no ocupe la página entera.
+  const ALTURA_MAX_GRAFICO = 85;
   GRAFICOS_INFORME.forEach(g => {
     const chart = graficos[g.id];
     if (!chart) return;
-    const imgAncho = anchoContenido;
-    const imgAlto = imgAncho * 0.5;
+    const anchoReal = chart.canvas.clientWidth || chart.canvas.width || 1;
+    const altoReal = chart.canvas.clientHeight || chart.canvas.height || 1;
+    const aspecto = anchoReal / altoReal;
+
+    let imgAncho = anchoContenido;
+    let imgAlto = imgAncho / aspecto;
+    if (imgAlto > ALTURA_MAX_GRAFICO) {
+      imgAlto = ALTURA_MAX_GRAFICO;
+      imgAncho = imgAlto * aspecto;
+    }
+    const x = margen + (anchoContenido - imgAncho) / 2;
+
     if (y + imgAlto + 14 > altoPagina - 16) { doc.addPage(); y = margen; }
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
     doc.setTextColor(...PDF_COLORES.texto);
     doc.text(g.titulo, margen, y);
     y += 6;
-    doc.addImage(chart.toBase64Image(), "PNG", margen, y, imgAncho, imgAlto);
+    doc.addImage(chart.toBase64Image(), "PNG", x, y, imgAncho, imgAlto);
     y += imgAlto + 12;
   });
 
