@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -117,6 +118,7 @@
       <option value="14" selected>14 días</option>
       <option value="30">30 días</option>
     </select>
+    <button id="btn-exportar-informe" class="btn-secundario">Exportar informe (PDF)</button>
   </div>
 
   <div class="alerta">El salón con medidor real no tiene histórico propio (solo lectura en vivo): este análisis cubre los 9 salones simulados.</div>
@@ -158,6 +160,7 @@
 <script src="historial.js"></script>
 <script src="ui.js"></script>
 <script src="graficos.js"></script>
+<script src="informe.js"></script>
 <script src="app.js"></script>
 
 </body>

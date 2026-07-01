@@ -53,6 +53,10 @@ button {
 button:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: var(--shadow-hover); }
 button:disabled { background: var(--text-faint); cursor: not-allowed; transform: none; box-shadow: none; }
 
+.btn-secundario { background: var(--card); color: var(--accent); border: 1px solid var(--accent); box-shadow: none; }
+.btn-secundario:hover { background: var(--accent-soft); box-shadow: none; }
+.btn-secundario:disabled { background: var(--card); color: var(--text-faint); border-color: var(--border); }
+
 .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 18px; }
 
 .card { background: var(--card); border-radius: var(--radius); padding: 22px; border: 1px solid var(--border); box-shadow: var(--shadow); }

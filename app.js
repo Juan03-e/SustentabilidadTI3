@@ -214,6 +214,21 @@ function inicializarAnalisis() {
     periodoAnalisis = Number(e.target.value);
     if (vistaActual === "analisis") renderAnalisis(periodoAnalisis);
   });
+
+  document.getElementById("btn-exportar-informe").addEventListener("click", (e) => {
+    const btn = e.currentTarget;
+    const textoOriginal = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Generando…";
+    setTimeout(() => {
+      try {
+        generarInformePDF(periodoAnalisis);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = textoOriginal;
+      }
+    }, 30);
+  });
 }
 
 window.addEventListener("hashchange", route);
