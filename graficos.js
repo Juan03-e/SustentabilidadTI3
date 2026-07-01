@@ -36,9 +36,16 @@ function opcionesEjes(unidadY) {
   };
 }
 
+function renderConclusiones(conclusiones) {
+  document.getElementById("conclusiones").innerHTML = conclusiones
+    .map(c => `<div class="conclusion-item conclusion-${c.tipo}">${c.texto}</div>`)
+    .join("");
+}
+
 function renderAnalisis(dias) {
   const resumen = resumenPeriodo(dias);
   const patronHorario = patronHorarioPromedio(dias);
+  renderConclusiones(generarConclusiones(resumen, patronHorario));
 
   crearGrafico("grafico-diario", {
     type: "line",
